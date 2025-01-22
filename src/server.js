@@ -2,7 +2,7 @@ const express = require("express");
 const contactRoutes = require("./routes/contact.js");
 const mongoose = require("mongoose");
 const app = express();
-const PORT = 3000;
+const PORT = 3000 || process.env.PORT;
 const dotenv = require("dotenv");
 const authRouter = require("../src/routes/auth.js");
 
