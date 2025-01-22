@@ -10,7 +10,7 @@ const categoryRouter = require("./routes/category.js");
 
 dotenv.config();
 
-
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
