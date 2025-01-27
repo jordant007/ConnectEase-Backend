@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const cloudinary = require("cloudinary").v2;
 
 const upload = require('../helpers/multerConfig');
-const { uploadImage } = require('./cloudinaryConfig');
+// const { uploadImage } = require('./cloudinaryConfig');
 const express = require('express');
 const router = express.Router();
 cloudinary.config({
