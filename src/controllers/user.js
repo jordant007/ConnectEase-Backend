@@ -2,7 +2,7 @@ const { generateToken } = require("../helpers/generateToken");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const cloudinary = require("cloudinary").v2;
-const User = require("../models/user");
+
 const upload = require('../helpers/multerConfig');
 const { uploadImage } = require('./cloudinaryConfig');
 const express = require('express');
