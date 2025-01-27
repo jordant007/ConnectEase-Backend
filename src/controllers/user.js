@@ -109,9 +109,9 @@ const updatePicture = async (req, res) => {
 };
 
 
- const upload = async (req, res) => {
+ const uploadImage = async (req, res) => {
   try {
-    const filePath = req.file.path; // Path to the uploaded file
+    const filePath = req.file.path; 
     const result = await uploadImage(filePath); // Upload to Cloudinary
     res.status(200).json({
       message: 'Image uploaded successfully',
@@ -123,7 +123,7 @@ const updatePicture = async (req, res) => {
 };
 const updateImage = async (req, res) => {
   try {
-    const { id } = req.params; // Assuming user ID is sent in params
+    const { id } = req.params; 
     const { name, email, phone, profileImage, coverImage } = req.body; // New fields for images
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -139,4 +139,4 @@ const updateImage = async (req, res) => {
 };
 
 
-module.exports = { signup, login ,update ,updatePicture,cloudinary,router}
+module.exports = { signup, login ,update ,updateImage,uploadImage,cloudinary,router}
