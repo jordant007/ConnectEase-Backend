@@ -1,6 +1,17 @@
 const { generateToken } = require("../helpers/generateToken");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const cloudinary = require("cloudinary").v2;
+const User = require("../models/user");
+const upload = require('../helpers/multerConfig');
+const { uploadImage } = require('./cloudinaryConfig');
+const express = require('express');
+const router = express.Router();
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 const signup = async (req, res) => {
   try {
     const { name, email, phoneNumber, password } = req.body;
@@ -59,4 +70,73 @@ catch (err) {
 }
 }
 
-module.exports = { signup, login }
+const update = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+    const updatedContent = await Contact.findByIdAndUpdate(id, updates, {
+      new: true,
+    });
+    return res.status(200).json(updatedContent);
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
+};
+
+
+
+const updatePicture = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = {};
+
+    if (req.files?.avatar) {
+      const avatarUpload = await cloudinary.uploader.upload(req.files.avatar.tempFilePath, { folder: "avatars" });
+      updates.avatar = avatarUpload.secure_url;
+    }
+
+    if (req.files?.coverPhoto) {
+      const coverUpload = await cloudinary.uploader.upload(req.files.coverPhoto.tempFilePath, { folder: "cover_photos" });
+      updates.coverPhoto = coverUpload.secure_url;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+    return res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error("Error updating user:", err);
+    return res.status(500).json({ error: "Failed to update user." });
+  }
+};
+
+
+ const upload = async (req, res) => {
+  try {
+    const filePath = req.file.path; // Path to the uploaded file
+    const result = await uploadImage(filePath); // Upload to Cloudinary
+    res.status(200).json({
+      message: 'Image uploaded successfully',
+      url: result.secure_url, // Cloudinary image URL
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Image upload failed' });
+  }
+};
+const updateImage = async (req, res) => {
+  try {
+    const { id } = req.params; // Assuming user ID is sent in params
+    const { name, email, phone, profileImage, coverImage } = req.body; // New fields for images
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { name, email, phone, profileImage, coverImage },
+      { new: true }
+    );
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating user' });
+  }
+};
+
+
+module.exports = { signup, login ,update ,updatePicture,cloudinary,router}

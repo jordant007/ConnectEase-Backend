@@ -6,6 +6,7 @@ const PORT = 3000 || process.env.PORT;
 const dotenv = require("dotenv");
 const authRouter = require("../src/routes/auth.js");
 const cors = require("cors")
+const fileUpload = require("express-fileupload");
 const categoryRouter = require("./routes/category.js"); 
 
 dotenv.config();
@@ -13,7 +14,7 @@ dotenv.config();
 app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(fileUpload({ useTempFiles: true }));
 // API Routes
 app.get("/", (req, res) => {
   res.json({ message: "ConnectEase API" });
