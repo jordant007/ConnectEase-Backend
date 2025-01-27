@@ -74,11 +74,13 @@ const update = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
-    const updatedContent = await Contact.findByIdAndUpdate(id, updates, {
+    const updatedContent = await User.findByIdAndUpdate(id, updates, {
       new: true,
     });
+    console.log(updatedContent)
     return res.status(200).json(updatedContent);
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ error: err });
   }
 };
