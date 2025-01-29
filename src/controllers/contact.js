@@ -4,7 +4,7 @@ const addContact = async (req, res) => {
     const { name, email, phoneNumber, photo, category, userId } = req.body; // Get userId from request body
 
     // Validation
-    if (!name || !email || !phoneNumber || !category || !userId) {
+    if (!name || !email || !phoneNumber || !category) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
