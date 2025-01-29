@@ -10,7 +10,7 @@ router.post("/new",addContact);
 
 router.get("/",getContact );
 
-router.get("/:id", );
+router.get("/:id", getContact );
 
 router.delete("/:id", deleteContact);
 

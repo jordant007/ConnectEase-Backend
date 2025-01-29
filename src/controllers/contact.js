@@ -1,25 +1,26 @@
 const Contact = require("../models/contact");
-
 const addContact = async (req, res) => {
   try {
-    const { name, email, phoneNumber, photo, category } = req.body;
-    
+    const { name, email, phoneNumber, photo, category, userId } = req.body; // Get userId from request body
+
     // Validation
-    if (!name || !email || !phoneNumber || !category) {
+    if (!name || !email || !phoneNumber || !category || !userId) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const contact = await Contact.findOne({ phoneNumber });
+    
+    const contact = await Contact.findOne({ phoneNumber, userId });
     if (contact) {
-      return res.status(400).json({ message: "Contact already exists" });
+      return res.status(400).json({ message: "Contact already exists for this user" });
     }
 
     const newContact = new Contact({
       name,
       phoneNumber,
       email,
-      photo: photo || 'default-photo-url', // Provide default if no photo
+      photo: photo || 'default-photo-url',
       category,
+      userId
     });
 
     const savedContact = await newContact.save();
@@ -30,42 +31,63 @@ const addContact = async (req, res) => {
   }
 };
 
-const getContact =  async (req, res) => {
-    try {
-      const contacts = await Contact.find();
-      return res.status(200).json(contacts);
-    } catch (err) {
-      return res.status(500).json({ error: err });
+const getContact = async (req, res) => {
+  try {
+    const { userId } = req.query; //  userId from query 
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
     }
-}
+    
+    const contacts = await Contact.find({ userId });
+    return res.status(200).json(contacts);
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
+};
 
-
-   const deleteContact = async (req, res) => {
-      try {
-        const { id } = req.params;
-        const contacts = await Contact.findByIdAndDelete(id);
-        return res.status(200).json(contacts);
-      } catch (err) {
-        return res.status(500).json({ error: err });
-      }
+const deleteContact = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req.query;
+    
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
     }
+
+  
+    const contact = await Contact.findOneAndDelete({ _id: id, userId });
+    if (!contact) {
+      return res.status(404).json({ message: "Contact not found" });
+    }
+    return res.status(200).json(contact);
+  } catch (err) {
+    return res.status(500).json({ error: err });
+  }
+};
 
 const updateContact = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
-    const updatedContent = await Contact.findByIdAndUpdate(id, updates, {
-      new: true,
-    });
+    const { userId, ...updates } = req.body; // Separate userId from updates
+    
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const updatedContent = await Contact.findOneAndUpdate(
+      { _id: id, userId },
+      updates,
+      { new: true }
+    );
+
+    if (!updatedContent) {
+      return res.status(404).json({ message: "Contact not found" });
+    }
+    
     return res.status(200).json(updatedContent);
   } catch (err) {
     return res.status(500).json({ error: err });
   }
 };
 
-
-module.exports = { addContact, getContact,deleteContact ,updateContact };
-
-
-
-
+module.exports = { addContact, getContact, deleteContact, updateContact };
