@@ -1,27 +1,34 @@
 const Contact = require("../models/contact");
 
-
 const addContact = async (req, res) => {
   try {
     const { name, email, phoneNumber, photo, category } = req.body;
+    
+    // Validation
+    if (!name || !email || !phoneNumber || !category) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const contact = await Contact.findOne({ phoneNumber });
     if (contact) {
-      return res.status(400).json({ message: "contact already exists" });
-    } else {
-      const newContact = new Contact({
-        name,
-        phoneNumber,
-        email,
-        photo,
-        category,
+      return res.status(400).json({ message: "Contact already exists" });
+    }
+
+    const newContact = new Contact({
+      name,
+      phoneNumber,
+      email,
+      photo: photo || 'default-photo-url', // Provide default if no photo
+      category,
     });
+
     const savedContact = await newContact.save();
     return res.status(201).json(savedContact);
-}
-} catch (err) {
-    res.status(500).json({ error: err });
-}
-}
+  } catch (err) {
+    console.error("Error in addContact:", err);
+    res.status(500).json({ message: "Internal server error", error: err.message });
+  }
+};
 
 const getContact =  async (req, res) => {
     try {
