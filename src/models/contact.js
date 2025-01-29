@@ -7,7 +7,7 @@ const contactSchema = new mongoose.Schema(
         phoneNumber: { type: String, required: true }, 
         category: { type: String, required: true },
         photo: { type: String, default: 'default-photo-url' },
-        userId: { type: String, required: true}
+        userId: { type: String}
     }
 );
 
