@@ -27,7 +27,7 @@ app.use("/api/auth", authRouter);
 
 
 app.use("/api/category", categoryRouter);
-
+app.use("/api/mpesa/stk",stkRoute);
 
 mongoose
   .connect(process.env.MONGO_URI)
