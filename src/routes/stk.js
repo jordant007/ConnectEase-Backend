@@ -1,6 +1,6 @@
 const express = require("express");
 const {Router} = express
-const router =router()
+const router =Router()
 
 router.get("/stk", async (req,res)=>{
     try {
