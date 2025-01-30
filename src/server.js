@@ -8,6 +8,7 @@ const authRouter = require("../src/routes/auth.js");
 const cors = require("cors")
 const fileUpload = require("express-fileupload");
 const categoryRouter = require("./routes/category.js"); 
+const stkRoute = require ("./routes/stk.js")
 
 dotenv.config();
 
